@@ -1,0 +1,364 @@
+LAB 10 
+ACL Standards RFC
+PC-VLAN10-01 : 
+Ip Address : 10.0.0.2 
+Subnet Mask : 255.0.0.0 
+Default Gateway : 10.0.0.1
+
+PC-VLAN20-01 : 
+Ip Address : 172.16.0.2
+Subnet Mask : 255.240.0.0
+Default Gateway :172.16.0.1
+
+PC-VLAN30-01 :
+Ip Address : 192.168.0.2
+Subnet Mask : 255.255.0.0
+Default Gateway : 192.168.0.1
+
+Switch0 :
+en 
+conf t
+hostname Switch0
+vlan 10
+name VLAN10
+vlan 20
+name VLAN20
+vlan 30
+name VLAN30
+interface g0/1
+switchport mode trunk 
+interface F0/1
+switchport mode access 
+switchport access vlan 10
+interface F0/2
+switchport mode access 
+switchport access vlan 20
+interface F0/3
+switchport mode access 
+switchport access vlan 30
+
+R1 :
+en 
+conf t 
+hostname R1
+ip domain-name labo.labo
+username admin secret class
+line vty 0 4 
+login local 
+transport input ssh 
+crypto key generate rsa 
+interface s0/0/0
+ip nat outside
+no shutdown 
+ip address 88.0.0.1 255.255.255.252
+interface G0/1
+no ip address 
+no shutdown 
+exit 
+ip route 0.0.0.0 0.0.0.0 s0/0/0
+interface G0/1.10
+ip nat inside 
+encapsulation dot1Q 10
+ip address 10.0.0.1 255.0.0.0 
+interface G0/1.20
+ip nat inside 
+encapsulation dot1Q 20
+ip address 172.16.0.1 255.240.0.0
+interface G0/1.30
+ip nat inside 
+encapsulation dot1Q 30
+ip address 192.168.0.1 255.255.0.0
+exit 
+ip access-list standard PermitPrivate 
+permit 192.168.0.0 0.0.255.255
+permit 10.0.0.0 0.255.255.255
+permit 172.16.0.0 0.15.255.255
+deny any
+exit 
+line vty 0 4 
+access-class PermitPrivate in 
+exit 
+ip nat inside source list PermitPrivate interface s0/0/0
+
+
+
+
+
+ISP:
+en 
+conf t
+hostname ISP 
+interface S0/0/1
+no shutdown 
+ip address 88.0.0.2 255.255.255.252 
+interface G0/1
+no shutdown 
+ip address 88.0.0.5 255.255.255.252
+exit
+ip access-list standard RFC1918
+deny 192.168.0.0 0.0.255.255
+deny 10.0.0.0 0.255.255.255
+deny 172.16.0.0 0.15.255.255
+permit any
+interface S0/0/1
+ip access-group RFC1918 in
+
+
+
+
+PC Dans Internet : 
+Ip Address : 88.0.0.6
+Subnet Mask : 255.255.255.252
+Default Gateway :88.0.0.5
+
+
+
+Comprend pas pq les corrections des acl ne fonctionnent pas 
+_________________________________________________________________________________________________________________________________________________________________________________________________________________________________________________________________________________________________________________________________________________________
+
+
+ACL etendues labo 1.
+
+PC de Sofiane : 
+Ip address :203.0.113.2 
+Subnet Mask : 255.255.255.0
+Default Gateway :203.0.113.1
+Dns server : 198.51.100.3
+
+PC de Amatus : 
+Ip address :203.0.113.3 
+Subnet Mask : 255.255.255.0
+Default Gateway :203.0.113.1 
+Dns server : 198.51.100.3
+
+R1 :
+en 
+conf t
+hostname R1
+interface G0/0
+no shutdown 
+ip address 203.0.113.1 255.255.255.0
+interface s0/0/0
+no shutdown 
+ip address 192.0.2.1 255.255.255.252
+exit 
+router rip 
+version 2 
+network 192.0.2.0
+network 203.0.113.0
+
+
+R2 :
+en 
+conf t
+hostname R2
+interface G0/1
+no shutdown 
+ip address 198.51.100.1 255.255.255.0
+interface s0/0/0
+no shutdown 
+ip address 192.0.2.2 255.255.255.252
+interface s0/0/1
+no shutdown 
+ip address 192.0.2.5 255.255.255.252
+exit 
+router rip 
+version 2 
+network 192.0.2.0
+network 198.51.100.0
+network 192.0.2.4
+exit 
+ip access-list extended TURENTRESPASFILSDEPUTE
+permit tcp any host 198.51.100.2 eq www
+permit tcp any host 198.51.100.2 eq 443
+permit udp any host 198.51.100.3 eq domain
+permit tcp any host 198.51.100.3 eq domain
+permit tcp any host 198.51.100.4 eq smtp
+permit tcp any host 198.51.100.4 eq pop3
+permit tcp any host 198.51.100.4 eq 465
+permit tcp any host 198.51.100.4 eq 587
+permit tcp any host 198.51.100.4 eq 993
+permit tcp any host 198.51.100.4 eq 995
+deny ip any any
+exit 
+interface s0/0/1
+ip access-group TURENTRESPASFILSDEPUTE in
+
+
+Serveur Web :
+Ip address :198.51.100.2
+Subnet Mask : 255.255.255.0
+Default Gateway :192.51.100.1
+Dns server : 198.51.100.3
+
+
+Serveur DNS :
+Ip address :198.51.100.3
+Subnet Mask : 255.255.255.0
+Default Gateway :198.51.100.1
+	A record : 
+		name : www.labo.be
+		address : 198.51.100.2
+
+Serveur Mail :
+Ip address :198.51.100.4
+Subnet Mask : 255.255.255.0
+Default Gateway :198.51.100.1
+Dns server :  198.51.100.3
+
+
+ISP : 
+en 
+conf t
+hostname ISP
+interface s0/0/0
+no shutdown 
+ip address 192.0.2.6 255.255.255.252
+interface G0/0
+no shutdown 
+ip address 192.45.2.1 255.255.255.0
+exit 
+router rip 
+version 2 
+network 192.45.2.0
+network 192.0.2.4
+
+PC Dans internet :
+Ip address :192.45.2.2
+Subnet Mask : 255.255.255.0
+Default Gateway : 192.45.2.1
+Dns server :  198.51.100.3
+
+_________________________________________________________________________________________________________________________________________________________________________________________________________________________________________________________________________________________________________________________________________________________
+
+ACL etendues labo 2
+
+
+R1 :
+en 
+conf t
+hostname R1
+interface G0/0
+no shutdown 
+no ip address 
+interface g0/1
+no shutdown 
+ip address 192.0.2.1 255.255.255.252
+interface G0/0.10
+encapsulation dot1Q 10
+ip address 192.168.10.1 255.255.255.0
+interface G0/0.20
+encapsulation dot1Q 20
+ip address 192.168.20.1 255.255.255.0
+exit 
+router ospf 1
+auto-cost reference-bandwidth 1000
+network 192.168.10.0 0.0.0.255 area 0
+network 192.168.20.0 0.0.0.255 area 0
+network 192.0.2.0 0.0.0.3 area 0
+passive-interface G0/0.10
+passive-interface G0/0.20
+exit 
+ip access-list extended Uti
+permit tcp any host 88.0.0.2 eq www
+permit tcp any host 88.0.0.2 eq 443
+permit udp any host 88.0.0.3 eq domain
+permit tcp any host 88.0.0.3 eq domain
+permit tcp any host 88.0.0.4 eq smtp
+permit tcp any host 88.0.0.4 eq pop3
+permit tcp any host 88.0.0.4 eq 465
+permit tcp any host 88.0.0.4 eq 587
+permit tcp any host 88.0.0.4 eq 993
+permit tcp any host 88.0.0.4 eq 995
+deny ip any any
+exit 
+interface G0/0.10 
+ip access-group Uti in
+
+
+R2 :
+en 
+conf t
+hostname R2
+interface G0/0 
+no shutdown 
+ip address 192.0.2.2 255.255.255.252
+interface G0/1
+no shutdown 
+ip address 88.0.0.1 255.255.255.0
+exit 
+router ospf 1
+auto-cost reference-bandwidth 1000
+network 192.0.2.0 0.0.0.3 area 0
+network 88.0.0.0 0.0.0.255 area 0
+passive-interface G0/1
+ip access-list standard Invit
+deny 192.168.20.0 0.0.0.255
+permit any 
+exit 
+interface g0/0
+ip access-group Invit in
+
+
+SG : 
+en 
+conf t
+hostname SG
+vlan 10
+name Uti
+vlan 20
+name Invit
+interface G0/1
+switchport mode trunk 
+interface F0/3
+switchport mode access 
+switchport access vlan 20
+interface F0/2
+switchport mode access 
+switchport access vlan 10
+interface F0/1
+switchport mode access 
+switchport access vlan 10
+
+
+
+PC de Maxime : 
+Ip address :192.168.10.2
+Subnet Mask : 255.255.255.0
+Default-gateway :192.168.10.1
+DNS server : 88.0.0.3
+
+
+PC de Mohammed : 
+Ip address :192.168.10.3
+Subnet Mask : 255.255.255.0
+Default-gateway :192.168.10.1
+DNS server : 88.0.0.3
+
+PC d'un invité : 
+Ip address :192.168.20.2
+Subnet Mask : 255.255.255.0
+Default-gateway :192.168.20.1
+DNS server : 88.0.0.3
+
+Serveur Web : 
+Ip address :88.0.0.2
+Subnet Mask : 255.255.255.0
+Default-gateway :88.0.0.1
+DNS server : 88.0.0.3
+
+Serveur DNS : 
+Ip address :88.0.0.3
+Subnet Mask : 255.255.255.0
+Default-gateway :88.0.0.1
+	A record : 
+		name : www.labo.be
+		address : 198.51.100.2
+
+
+Serveur mail : 
+Ip address : 88.0.0.3
+Subnet Mask : 255.255.255.0
+Default-gateway :88.0.0.1
+DNS server : 88.0.0.3
+
