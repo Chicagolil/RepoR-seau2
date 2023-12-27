@@ -1,0 +1,452 @@
+LABO 3.1
+
+En premier Lieu : Faire le schéma logique
+
+Routeur-Haut:
+en 
+conf t
+hostname Routeur-Haut
+interface f0/0 
+no shutdown 
+ip address 192.168.0.129 255.255.255.224
+exit 
+router rip 
+version 2
+network 192.168.0.0
+ 
+Routeur-Bas: 
+en 
+conf t
+interface f0/1
+no ip add
+no shutdown 
+interface f0/1.1
+encapsulation dot1Q 1
+ip address 192.168.0.1 255.255.255.224
+interface f0/1.2
+encapsulation dot1Q 2
+ip address 192.168.0.33 255.255.255.224
+interface f0/1.3
+encapsulation dot1Q 3 
+ip address 192.168.0.65 255.255.255.224
+interface f0/1.99
+encapsulation dot1Q 99
+ip address 192.168.0.97 255.255.255.224
+interface f0/0 
+no shutdown 
+ip address 192.168.0.130 255.255.255.224
+exit 
+router rip 
+version 2
+network 192.168.0.0
+
+
+Switch-Gauche: 
+en 
+conf t
+hostname Switch-Gauche 
+vlan 1
+name toto (erreur, on ne peut pas changer son nom puisqu'il est natif maggle) 
+vlan 2 
+name prof
+vlan 3
+name student
+vlan 99
+name admin
+interface f0/10
+switchport mode trunk
+interface f0/11
+switchport mode trunk 
+interface f0/1
+switchport mode access
+switchport access vlan 1
+interface f0/2
+switchport mode access 
+switchport access vlan 2
+interface f0/3
+switchport mode access 
+switchport access vlan 3
+interface vlan 99
+no shutdown 
+ip address 192.168.0.98 255.255.255.224
+exit 
+ip default-gateway 192.168.0.97
+
+
+Switch-Droite: 
+en 
+conf t 
+hostname Switch-Droite 
+vlan 1
+vlan 2
+name prof
+vlan 3
+name student
+vlan 99
+name admin
+interface f0/11
+switchport mode trunk 
+interface f0/1
+switchport mode access 
+switchport access vlan 1
+interface f0/2
+switchport mode access
+switchport access vlan 2
+interface f0/3
+switchport mode access 
+switchport access vlan 3
+interface vlan 99
+no shutdown 
+ip address 192.168.0.99 255.255.255.224
+exit 
+ip default-gateway 192.168.0.97
+
+
+PC1:
+Ip address :192.168.0.2
+Subnet Mask :255.255.255.224
+Default gateway :192.168.0.1
+
+
+PC2:
+Ip address :192.168.0.34
+Subnet Mask :255.255.255.224
+Default gateway :192.168.0.33
+
+
+PC3:
+Ip address :192.168.0.66
+Subnet Mask :255.255.255.224
+Default gateway :192.168.0.65
+
+
+PC4:
+Ip address :192.168.0.3
+Subnet Mask :255.255.255.224
+Default gateway :192.168.0.1
+
+
+PC5:
+Ip address :192.168.0.35
+Subnet Mask :255.255.255.224
+Default gateway :192.168.0.33
+
+
+PC6:
+Ip address :192.168.0.67
+Subnet Mask :255.255.255.224
+Default gateway :192.168.0.65
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+______________________________________________________________________________________________________________________________________________________________________________________________________________________________________
+
+LABO3.2
+
+PC0:
+Ip address :195.167.142.2
+Subnet Mask :255.255.255.192
+Default gateway :195.167.142.1
+
+
+PC1:
+Ip address :195.167.142.66
+Subnet Mask :255.255.255.224
+Default gateway :195.167.142.65
+
+
+PC2:
+Ip address :195.167.142.3
+Subnet Mask :255.255.255.192
+Default gateway :195.167.142.1
+
+
+PC3:
+Ip address :195.167.142.67
+Subnet Mask :255.255.255.224
+Default gateway :195.167.142.65
+
+Router0:
+en  
+conf t
+hostname Router0
+interface G0/0
+no ip address
+no shutdown 
+interface g0/0.3
+encapsulation dot1Q 3
+ip address 195.167.142.1 255.255.255.192
+interface g0/0.4
+encapsulation dot1Q 4
+ip address 195.167.142.65 255.255.255.224
+interface g0/0.99
+encapsulation dot1Q 99
+ip address 195.167.142.97 255.255.255.248
+
+Switch0:
+en  
+conf t
+hostname Switch1
+vlan 3 
+name Vlan3
+vlan 4 
+name Vlan4
+vlan 99
+name admin
+interface f0/1
+switchport mode trunk 
+interface f0/2
+switchport mode trunk 
+interface f0/3
+switchport mode access 
+switchport access vlan 3
+interface F0/4
+switchport mode access
+switch access vlan 4
+interface vlan 99
+no shutdown 
+ip address 195.167.142.98 255.255.255.248
+exit 
+ip default-gateway 195.167.142.97
+
+Switch1:
+en  
+conf t
+hostname Switch2
+vlan 3 
+name Vlan3
+vlan 4 
+name Vlan4
+vlan 99
+name admin
+interface f0/2
+switchport mode trunk 
+interface f0/3
+switchport mode acces 
+switchport access vlan 3
+interface f0/4
+switchport mode access 
+switchport access vlan 4
+
+______________________________________________________________________________________________________________________________________________________________________________________________________________________________________
+
+LABO 3.3
+
+PC1:
+Ip address : 192.168.10.2
+Subnet Mask : 255.255.255.0
+Default gateway : 192.168.10.1
+
+PC4:
+Ip address : 192.168.10.3
+Subnet Mask : 255.255.255.0
+Default gateway : 192.168.10.1
+
+PC2:
+Ip address : 192.168.20.2
+Subnet Mask : 255.255.255.0
+Default gateway : 192.168.20.21
+
+PC5:
+Ip address : 192.168.20.3
+Subnet Mask : 255.255.255.0
+Default gateway : 192.168.20.1
+
+PC3:
+Ip address : 192.168.30.2
+Subnet Mask : 255.255.255.0
+Default gateway : 192.168.30.1
+
+PC6:
+Ip address : 192.16830.3
+Subnet Mask : 255.255.255.0
+Default gateway : 192.168.30.1
+
+PC7:
+Ip address : 192.168.110.2
+Subnet Mask : 255.255.255.0
+Default gateway : 192.168.110.1
+
+PC9:
+Ip address : 192.168.110.3
+Subnet Mask : 255.255.255.0
+Default gateway : 192.168.110.1
+
+PC8:
+Ip address : 192.168.120.2
+Subnet Mask : 255.255.255.0
+Default gateway : 192.168.120.1
+
+PC10:
+Ip address : 192.168.120.3
+Subnet Mask : 255.255.255.0
+Default gateway : 192.168.120.1
+
+Schaerbeek : 
+en 
+conf t
+hostname Schaerbeek
+interface g0/0 
+no shutdown 
+no ip address
+interface g0/0.110
+encapsulation dotQ 110
+ip address 192.168.110.1 255.255.255.0
+interface g0/0.120
+encapsulation dot1Q 120
+ip address 192.168.120.1 255.255.255.0
+interface s0/0/0
+no shutdown 
+ip address 192.168.0.2 255.255.255.252
+exit 
+router rip 
+version 2
+network 192.168.0.0
+network 192.168.110.0
+network 192.168.120.0
+passive-interface G0/0
+
+
+Switch-Haut-Gauche:
+en 
+conf t
+hostname Switch-Haut-Gauche 
+vlan 110
+name Serveur
+vlan 120
+name Compta 
+interface F0/23
+switchport mode trunk 
+interface F0/1 
+switchport mode access 
+switchport access vlan 110
+interface F0/2
+switchport mode access 
+switchport access vlan 120
+
+Switch-Haut-Droite:
+en 
+conf t
+hostname Switch-Haut-Droite 
+vlan 110
+name Serveur
+vlan 120
+name Compta
+interface F0/23
+switchport mode trunk 
+interface F0/24
+switchport mode trunk 
+interface F0/1 
+switchport mode access 
+switchport access vlan 110
+interface F0/2
+switchport mode access 
+switchport access vlan 120
+
+LLN: 
+en 
+conf t
+hostname LLN 
+interface s0/0/0
+no shutdown 
+ip address 192.168.0.1 255.255.255.252
+interface g0/0
+no shutdown 
+no ip address 
+interface g0/0.10
+encapsulation dotQ 10
+ip address 192.168.10.1 255.255.255.0
+interface g0/0.20
+encapsulation dotQ 20
+ip address 192.168.20.1 255.255.255.0
+interface g0/0.30
+encapsulation dotQ 30
+ip address 192.168.30.1 255.255.255.0
+interface g0/0.99
+encapsulation dotQ 99 native
+ip address 192.168.99.1 255.255.255.0
+exit 
+router rip 
+version 2
+network 192.168.0.0
+network 192.168.10.0
+network 192.168.20.0
+network 192.168.30.0
+network 192.168.99.0
+passive-interface G0/0
+
+
+Switch-Gauche:
+en 
+conf t
+hostname Switch-Gauche 
+vlan 10
+name Student
+vlan 20
+name Prof
+vlan 30
+name IT
+vlan 99
+name Admin
+interface F0/24
+switchport mode trunk
+interface F0/23
+switchport mode trunk
+switchport trunk native vlan 99
+interface F0/1
+switchport mode access 
+switchport access vlan 10
+interface F0/2
+switchport mode access 
+switchport access vlan 20
+interface F0/2
+switchport mode access 
+switchport access vlan 30
+interface vlan 99
+ip address 192.168.99.2 255.255.255.0
+exit 
+ip default-gateway 192.168.99.1
+
+
+
+Switch-Droite:
+en 
+conf t
+hostname Switch-Droite 
+vlan 10
+name Student
+vlan 20
+name Prof
+vlan 30
+name IT
+vlan 99
+name Admin
+interface F0/23
+switchport mode trunk
+switchport trunk native vlan 99
+interface F0/1
+switchport mode access 
+switchport access vlan 10
+interface F0/2
+switchport mode access 
+switchport access vlan 20
+interface F0/2
+switchport mode access 
+switchport access vlan 30
+
+
+

@@ -1,0 +1,203 @@
+RIPv2 27/09
+
+
+PC-01:
+Ip address : 10.1.1.1
+Mask : 255.255.255.0
+Default gateway : 10.1.1.254
+
+
+SW-01:
+en  
+conf t 
+hostname SW-01
+ip domain-name formation.lab 
+username admin secret cisco 
+line vty 0 15
+login local 
+transport input ssh 
+exit 
+crypto key generate rsa 
+interface vlan 1
+no shutdown 
+ip address 10.1.1.201 255.255.255.0
+exit 
+ip default-gateway 10.1.1.254
+
+
+RT-01:
+en 
+conf t 
+hostname RT-01
+interface G0/0/1 
+no shutdown 
+ip address 10.1.0.1 255.255.255.248
+interface S0/2/0 
+no shutdown 
+ip address 200.0.0.100 255.255.255.0
+interface G0/0/0
+no shutdown 
+ip address 10.1.1.254 255.255.255.0
+exit 
+router rip 
+version 2
+network 10.1.0.0
+network 10.1.1.0
+passive-interface G0/0/0
+default-information originate 
+exit
+ip route 0.0.0.0 0.0.0.0 200.0.0.200
+ip domain-name formation.lab
+username admin secret cisco 
+line vty 0 4 
+login local 
+transport input ssh 
+exit 
+crypto key generate rsa 
+
+PC-02:
+Ip address : 10.1.2.1
+Mask : 255.255.255.0
+Default gateway :10.1.2.254
+
+
+SW-02:
+en 
+conf t 
+hostname SW-02
+ip domain-name formation.lab 
+username admin secret cisco 
+line vty 0 15
+login local 
+transport input ssh 
+exit 
+crypto key generate rsa 
+interface vlan 1 
+no shutdown
+ip address 10.1.2.202 255.255.255.0
+exit 
+ip default-gateway 10.1.2.254
+
+RT-02:
+en 
+conf t 
+hostname RT-02
+interface G0/0/0 
+no shutdown 
+ip address 10.1.2.254 255.255.255.0
+interface G0/0/1
+no shutdown 
+ip address 10.1.0.2 255.255.255.248
+exit 
+router rip 
+version 2
+network 10.1.2.0
+network 10.1.0.0
+passive-interface G0/0/0
+exit 
+ip domain-name formation.lab
+username admin secret cisco 
+line vty 0 4 
+login local 
+transport input ssh
+exit 
+crypto key generate rsa 
+
+
+SW-12: /
+
+RT-03:
+en 
+conf t 
+hostname RT-03
+interface G0/0/1
+no shutdown 
+ip address 10.1.0.3 255.255.255.248
+interface S0/2/0
+no shutdown 
+ip address 192.168.1.254 255.255.255.252
+interface G0/0/0
+no shutdown 
+ip address  192.168.1.190 255.255.255.192
+exit 
+router rip 
+version 2
+network 192.168.1.252
+network 192.138.1.128
+network 10.1.0.0
+passive-interface G0/0/0
+exit 
+ip domain-name formation.lab
+username admin secret cisco 
+line vty 0 4 
+login local 
+transport input ssh 
+exit 
+crypto key generate rsa
+
+
+
+
+PC1:
+Ip address : 192.168.1.1
+Mask : 255.255.255.128
+Default gateway : 192.168.1.126
+
+
+S1:
+en 
+conf t
+hostname S1
+enable secret admin 
+line vty 0 15 
+password cisco 
+exit 
+interface vlan 1
+no shutdown 
+ip address 192.168.1.104 255.255.255.128
+exit 
+ip default-gateway 192.168.1.126 
+
+
+R1:
+en 
+conf t 
+hostname R1
+interface G0/0/0
+no shutdown 
+ip address 192.168.1.126 255.255.255.128
+interface S0/2/0
+no shutdown 
+ip address 192.168.1.253 255.255.255.252
+exit 
+router rip 
+version 2
+network 192.168.1.0
+network 192.168.1.252
+passive-interface G0/0/0
+exit 
+enable secret admin 
+line vty 0 4 
+password cisco 
+
+
+PC130:
+Ip address : 192.168.1.130
+Mask : 255.255.255.192
+Default gateway :192.168.1.190
+
+
+S2:
+en 
+conf t
+hostname S2
+enable secret admin
+line vty  0 15
+password cisco 
+exit 
+interface vlan 1
+no shutdown 
+ip address XXXXXXXXXXX XXXXXXXX
+exit 
+ip default-gateway XXXXXXXXX
+
