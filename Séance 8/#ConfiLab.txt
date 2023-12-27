@@ -1,0 +1,109 @@
+LAB 8
+CONFIG DE SERVEURS 
+PC de bruno : 
+Ip address : 192.168.30.2
+Subnet Mask : 255.255.255.128
+Default Gateway : 192.168.30.1
+DNS server : 192.168.30.130
+MAIL :
+	Your name : bruno
+	Email Address : bruno@ephec.be
+	Incoming Mail Server :  pop3.ephec.be
+	Outgoing Mail Server :	smtp.ephec.be
+	User Name : bruno
+	Password : bruno123
+
+
+PC de pierre-louis : 
+Ip address : 192.168.30.3
+Subnet Mask : 255.255.255.128
+Default Gateway : 192.168.30.1
+DNS server : 192.168.30.130
+MAIL :
+	Your name : pierre-louis
+	Email Address : pierre-louis@ephec.be
+	Incoming Mail Server :  pop3.ephec.be
+	Outgoing Mail Server :	smtp.ephec.be
+	User Name : pierre-louis
+	Password : pierre-louis
+
+
+PC de yassa :
+Ip address : 192.168.30.4
+Subnet Mask : 255.255.255.128
+Default Gateway : 192.168.30.1
+DNS server : 192.168.30.130
+MAIL :
+	Your name : yassa
+	Email Address : yassa@ephec.be
+	Incoming Mail Server :  pop3.ephec.be
+	Outgoing Mail Server :	smtp.ephec.be
+	User Name : yassa
+	Password : yassa
+
+
+PC de marius :
+Ip address : 192.168.30.5
+Subnet Mask : 255.255.255.128
+Default Gateway : 192.168.30.1
+DNS server : 192.168.30.130
+MAIL :
+	Your name : marius
+	Email Address : marius@ephec.be
+	Incoming Mail Server :  pop3.ephec.be
+	Outgoing Mail Server :	smtp.ephec.be
+	User Name : marius
+	Password : marius
+
+
+R1:
+en  
+conf t
+hostname R1
+interface F0/0
+no shutdown 
+ip address 192.168.30.1 255.255.255.128
+interface F0/1
+no shutdown 
+ip address 192.168.30.129 255.255.255.224
+
+
+Serveur DNS : 
+Ip address : 192.168.30.
+Subnet Mask : 255.255.255.224
+Default Gateway : 192.168.30.129
+	1er A-Record: 
+		Name : serveur1
+		Address : 192.168.30.131
+	2e A-Record :
+		Name : serveur2
+		Address : 192.168.30.132
+	1er C-Name: 
+		Name : pop3.ephec.be
+		Host Name : serveur1
+	2e C-Name: 
+		Name : smtp.ephec.be
+		Host Name : serveur1
+	3e C-Name: 
+		Name : www.ephec.be
+		Host Name : serveur2
+
+
+		
+
+serveurs 1 (pop3 et smtp) :
+Ip address : 192.168.30.
+Subnet Mask : 255.255.255.224
+Default Gateway : 192.168.30.129
+DNS server : 192.168.30.130
+	Domain-name : ephec.be
+		user : bruno pwd : bruno 123
+		user : yassa pwd : yassa
+		user : marius pwd : marius
+		user : pierre-louis pwd : pierre-louis
+
+serveur2 (web):
+Ip address : 192.168.30.
+Subnet Mask : 255.255.255.224
+Default Gateway : 192.168.30.129
+DNS server : 192.168.30.130

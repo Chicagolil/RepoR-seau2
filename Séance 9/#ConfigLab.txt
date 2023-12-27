@@ -1,0 +1,224 @@
+LAB 9 OSPF 
+
+PC1 :
+Ip Address : 192.168.10.2
+Subnet Mask : 255.255.255.0
+Default Gateway :192.168.10.1
+
+PC2 :
+Ip Address : 192.168.20.2
+Subnet Mask : 255.255.255.0
+Default Gateway :192.168.20.1
+
+PC dans internet : 
+Ip Address : 88.55.33.130
+Subnet Mask : 255.255.255.128
+Default Gateway :88.55.33.129
+
+ISP :
+en 
+conf t 
+hostname ISP 
+interface G0/0 
+no shutdown 
+ip address 88.55.33.129 255.255.255.252 
+interface s0/0/0
+no shutdown 
+ip address 88.55.33.1 255.255.255.252
+
+Routeur-Haut :
+en 
+conf t
+hostname Routeur-Haut
+interface s0/0/0
+no shutdown 
+ip nat outside 
+ip address 88.55.33.2 255.255.255.252
+interface g0/0
+no shutdown 
+ip nat inside 
+ip address 192.168.0.5 255.255.255.252
+interface G0/1
+ip nat inside 
+no shutdown 
+ip address 192.168.0.9 255.255.255.252
+exit 
+ip route 0.0.0.0 0.0.0.0 s0/0/0
+access-list 1 permit 192.168.0.0 0.0.255.255
+ip nat inside source list 1 interface serial 0/0/0 overload 
+router ospf 1
+auto-cost reference-bandwidth 1000
+default-information originate 
+network 192.168.0.4 0.0.0.3 area 0 
+network 192.168.0.8 0.0.0.3 area 0
+
+
+
+Routeur-Gauche :
+en 
+conf t
+hostname Routeur-Gauche 
+interface G0/0
+no shutdown 
+ip address 192.168.0.6 255.255.255.252
+interface G0/1
+no shutdown 
+ip address 192.168.10.1 255.255.255.0
+interface vlan 1
+no shutdown 
+ip address 192.168.0.1 255.255.255.252
+interface F0/1/0
+no shutdown 
+switchport mode acces 
+switchport access vlan 1
+exit 
+router ospf 1 
+auto-cost reference-bandwidth 1000
+network 192.168.0.4 0.0.0.3 area 0 
+network 192.168.10.0 0.0.0.255 area 0
+network 192.168.0.0 0.0.0.3 area 0
+passive-interface G0/1
+
+
+
+
+Routeur-Droite : 
+en 
+conf t
+hostname Routeur-Droite 
+interface G0/0
+no shutdown 
+ip address 192.168.0.10 255.255.255.252
+interface G0/1
+no shutdown 
+ip address 192.168.20.1 255.255.255.0
+interface vlan 1
+no shutdown 
+ip address 192.168.0.2 255.255.255.252
+interface F0/1/0
+no shutdown
+switchport mode acces 
+switchport access vlan 1
+exit 
+router ospf 1 
+auto-cost reference-bandwidth 1000
+network 192.168.0.8 0.0.0.3 area 0 
+network 192.168.20.0 0.0.0.255 area 0
+network 192.168.0.0 0.0.0.3 area 0
+passive-interface G0/1
+
+
+
+
+
+
+
+
+
+
+PC1(1) :
+Ip Address : 192.168.10.2
+Subnet Mask : 255.255.255.0
+Default Gateway :192.168.10.1
+
+PC2(1) :
+Ip Address : 192.168.20.2
+Subnet Mask : 255.255.255.0
+Default Gateway :192.168.20.1
+
+PC dans internet(1): 
+Ip Address : 88.55.33.130
+Subnet Mask : 255.255.255.128
+Default Gateway :88.55.33.129:
+
+ISP(1) :
+en 
+conf t 
+hostname ISP 
+interface G0/0 
+no shutdown 
+ip address 88.55.33.129 255.255.255.252 
+interface s0/0/0
+no shutdown 
+ip address 88.55.33.1 255.255.255.252
+
+Routeur-Haut(1) :
+en 
+conf t
+hostname Routeur-Haut
+interface s0/0/0
+no shutdown 
+ip nat outside 
+ip address 88.55.33.2 255.255.255.252
+interface g0/0
+no shutdown 
+ip nat inside 
+ip address 192.168.0.5 255.255.255.252
+interface G0/1
+ip nat inside 
+no shutdown 
+ip address 192.168.0.9 255.255.255.252
+exit 
+ip route 0.0.0.0 0.0.0.0 s0/0/0
+access-list 1 permit 192.168.0.0 0.0.255.255
+ip nat inside source list 1 interface serial 0/0/0 overload 
+router rip 
+version 2
+default-information originate
+network 192.168.0.4
+network 192.168.0.8
+
+
+Routeur-Gauche(1) :
+en 
+conf t
+hostname Routeur-Gauche 
+interface G0/0
+no shutdown 
+ip address 192.168.0.6 255.255.255.252
+interface G0/1
+no shutdown 
+ip address 192.168.10.1 255.255.255.0
+interface vlan 1
+no shutdown 
+ip address 192.168.0.1 255.255.255.252
+interface F0/1/0
+no shutdown 
+switchport mode acces 
+switchport access vlan 1
+exit 
+router rip 
+version 2
+network 192.168.0.0
+network 192.168.0.4
+network 192.168.10.0
+passive-interface G0/1
+
+Routeur-Droite(1) : 
+
+en 
+conf t
+hostname Routeur-Droite 
+interface G0/0
+no shutdown 
+ip address 192.168.0.10 255.255.255.252
+interface G0/1
+no shutdown 
+ip address 192.168.20.1 255.255.255.0
+interface vlan 1
+no shutdown 
+ip address 192.168.0.2 255.255.255.252
+interface F0/1/0
+no shutdown
+switchport mode acces 
+switchport access vlan 1
+router rip 
+version 2
+network 192.168.0.0
+network 192.168.0.8
+network 192.168.20.0
+passive-interface G0/1
+
+
+
+
