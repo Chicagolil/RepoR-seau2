@@ -1,0 +1,278 @@
+LAB 7 
+DCHP SUR UN ROUTEUR :
+
+LT-01 : client DHCP 
+
+
+DNS-01: 
+Ip address : 10.1.0.11
+Subnet Mask : 255.255.255.0
+Default-Gateway: 10.1.0.254
+configurer le service DNS : 
+	activer le service
+	Name : www.ephec.be
+	Address 10.1.0.11
+	Type : A record
+
+
+RT-01:
+en 
+conf t
+hostname RT-01
+interface g0/0/0
+no shutdown 
+ip address 10.1.0.254 255.255.255.0
+exit 
+ip dhcp pool LILOU 
+network 10.1.0.0 255.255.255.0
+dns-server 10.1.0.11
+domain-name formation.lab
+default-router 10.1.0.254
+exit 
+ip dhcp excluded-address 10.1.0.254
+ip dhcp excluded-address 10.1.0.11
+ip dhcp excluded-address 10.1.0.241
+
+
+SW-01:
+en 
+conf t
+hostname SW-01
+ip domain-name formation.lab
+interface vlan 1 
+no shutdown 
+ip address 10.1.0.241 255.255.255.0
+
+______________________________________________________________________________________________________________________________________________________________________________
+DHCP V1 :
+PC2 : 
+Ip address : 192.168.10.2 
+Subnet Mask : 255.255.255.0 
+Default-Gateway : 192.168.10.1
+
+R1: 
+en 
+conf t
+hostname R1
+interface G0/1
+no shutdown 
+ip address 192.168.10.1 255.255.255.0
+interfae G0/0
+no shutdown 
+ip address 192.168.0.1 255.255.255.0
+
+Serveur DHCP : 
+IP/Sub/Gate/Dns déjà configuré 
+Service DHCP déjà configuré 
+néamoins ptite erreur dans la config, le pc s'est retrouvé avec la même addresse ip que la passerelle par défaut 
+donc on commence les ip a distribuer plus loin 
+
+
+Serveur DNS :
+Ip address :192.168.0.3
+Subnet Mask : 255.255.255.0 
+Default Gateway : 192.168.0.1 
+configurer le service DNS : 
+	activer le service
+	premier A-Record : 
+		name : www.labo.be 
+		address : 192.168.0.2 
+	deuxième A-record : 
+		name : www.ephec.be 
+		address : 192.168.0.3 
+	
+PC1 : Client DHCP 
+
+
+
+
+______________________________________________________________________________________________________________________________________________________________________________
+DHCP V2 :
+
+R1 :
+en 
+conf t 
+hostname R1
+interface g0/1
+no shutdown 
+ip address 192.168.10.1 255.255.255.0
+ip helper-address 192.168.0.2
+interface G0/0
+no shutdown 
+ip address 192.168.0.1 255.255.255.0
+
+DNS : 
+Ip address : 192.168.0.3
+Subnet Mask : 255.255.255.0
+Default Gateway : 192.168.0.1
+activer le service
+	premier A-Record : 
+		name : www.labo.be 
+		address : 192.168.0.2 
+	deuxième A-record : 
+		name : www.ephec.be 
+		address : 192.168.0.3 
+
+DHCP : 
+IP/Sub/Gate/Dns déjà configuré 
+activer le service dhcp : 
+	ajouter un nouveau pool pour le lan du pc2 
+	pool name : on s'en fou 
+	default gateway : 192.168.10.1
+	DNS server : 192.168.0.3
+	start Ip address : 192.168.10.2
+	subnet Mask : 255.255.255.0
+	BONUS , configurer aussi le pool pour le lan du PC1
+	
+
+PC2 : Client Dhcp dans un autre réseau
+
+______________________________________________________________________________________________________________________________________________________________________________
+DHCP V3 :
+SRV-01(dhcp):
+Ip Address : 192.168.10.2
+Subnet Mask : 255.255.255.0
+Default Gateway : 192.168.10.1
+activer le service dhcp : 
+	ajouter un nouveau pool pour le vlan 30 du PC-PROD
+	pool name : on s'en fou 
+	default gateway :192.168.30.1
+	DNS server :192.168.20.3
+	start Ip address : 192.168.30.2
+	subnet Mask : 255.255.255.0
+
+R1:
+en 
+conf t
+hostname R1
+interface G0/1 
+no shutdown 
+ip address 192.168.10.1 255.255.255.0
+interface G0/0 
+no shutdown 
+no ip address 
+interface G0/0.20
+encapsulation dot1Q 20
+ip address 192.168.20.1 255.255.255.0
+interface G0/0.30
+encapsulation dot1Q 30
+ip address 192.168.30.1 255.255.255.0
+ip helper-address 192.168.10.2
+interface G0/0.40
+encapsulation dot1Q 40
+ip address 192.168.40.1 255.255.255.248
+
+S1 :
+en 
+conf t 
+hostname S1
+vlan 20 
+name SRV
+vlan 30
+name PRD
+vlan 40 
+name IT
+interface F0/4
+switchport mode trunk
+interface F0/2
+switchport mode access
+switchport access vlan 20
+interface F0/1
+switchport mode access
+switchport access vlan 40
+interface F0/3
+switchport mode access
+switchport access vlan 30
+
+
+PC-PROD-01:
+client DHCP
+
+SRV-02 (dns et web):
+Ip address : 192.168.20.3
+Subnet Mask : 255.255.255.0
+Default gateway : 192.168.20.1
+activer le service dns 
+	A-Record : 
+		name : www.labo.be 
+		address : 192.168.20.3 
+
+PC-IT-02:
+Ip address : 192.168.40.2
+Subnet Mask : 255.255.255.248
+Default gateway : 192.168.40.1
+______________________________________________________________________________________________________________________________________________________________________________
+DHCP V4 :
+
+SRV-01(dhcp):
+Ip Address : 192.168.10.2
+Subnet Mask : 255.255.255.0
+Default Gateway : 192.168.10.1
+Dns Server : 192.168.20.3
+activer le service dhcp : 
+	ajouter un nouveau pool pour le vlan 30 du PC-PROD
+	pool name : on s'en fou 
+	default gateway :192.168.30.1
+	DNS server :192.168.20.3
+	start Ip address : 192.168.30.2
+	subnet Mask : 255.255.255.0
+
+SRV-02 (dns et web):
+Ip address : 192.168.20.3
+Subnet Mask : 255.255.255.0
+Default gateway : 192.168.20.1
+activer le service dns 
+	A-Record : 
+		name : www.labo.be 
+		address : 192.168.20.3 
+
+PC-IT-02:
+Ip address : 192.168.40.2
+Subnet Mask : 255.255.255.248
+Default gateway : 192.168.40.1
+Dns Server : 192.168.20.3
+
+
+S1 :
+en 
+conf t 
+hostname S1
+vlan 20 
+name SRV
+vlan 30
+name PRD
+vlan 40 
+name IT
+interface F0/4
+switchport mode trunk
+interface F0/2
+switchport mode access
+switchport access vlan 20
+interface F0/1
+switchport mode access
+switchport access vlan 40
+interface F0/3
+switchport mode access
+switchport access vlan 30
+
+
+
+
+Sw-L3:
+en 
+conf t
+hostname Sw-L3
+ip routing 
+interface F0/1
+no switchport 
+ip address 192.168.10.1 255.255.255.0
+interface G0/1
+switchport trunk encapsulation dot1Q
+switchport mode trunk 
+interface vlan 20
+ip address 192.168.20.1 255.255.255.0
+interface vlan 30
+ip helper-address 192.168.10.2
+ip address 192.168.30.1 255.255.255.0
+interface vlan 40
+ip address 192.168.40.1 255.255.255.248

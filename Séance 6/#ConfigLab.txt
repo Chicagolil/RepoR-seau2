@@ -1,0 +1,114 @@
+NAT
+
+LAB 6.0 
+PC1:
+Ip Address : 192.168.1.1
+Subnet Mask : 255.255.255.0
+Default gateway : 192.168.1.254
+
+R1:
+en  
+conf t 
+hostname R1
+interface F0/0
+ip nat inside
+no shutdown 
+ip address 192.168.1.254 255.255.255.0
+interface S0/0/1
+ip nat outside 
+no shutdown 
+ip address 200.0.0.2 255.255.255.252
+exit 
+ip nat inside source list 1 interface serial 0/0/1 overload 
+access-list 1 permit 192.168.1.0 0.0.0.255
+ip route 1.1.1.0 255.255.255.0 200.0.0.1
+exit 
+show ip nat translation 
+
+ISP:
+en  
+conf t 
+hostname ISP 
+interface F0/0
+no shutdown 
+ip address 1.1.1.254 255.255.255.0
+interface S0/0/0
+no shutdown 
+ip address 200.0.0.1 255.255.255.252
+
+HTTP:
+Ip Address : 1.1.1.1
+Subnet Mask : 255.255.255.0
+Default gateway : 1.1.1.254
+
+
+
+
+
+
+______________________________________________________________________________________________________________________________________________________________________________________________________________________________
+
+LAB 6.1
+
+PC1 :
+Ip Address : 192.168.10.2
+Subnet Mask : 255.255.255.0
+Default-gateway : 192.168.10.1
+
+PC2 : 
+Ip Address : 192.168.20.2
+Subnet Mask : 255.255.255.0
+Default-gateway : 192.168.20.1
+
+Server0 :
+Ip Address : 192.168.20.3
+Subnet Mask : 255.255.255.0 
+Default-gateway : 192.168.20.1
+
+RG1 :
+en 
+conf t
+hostname RG1
+interface F0/0
+no shutdown 
+ip address 192.168.10.1 255.255.255.0
+ip nat inside 
+interface F0/1
+no shutdown 
+ip nat inside 
+ip address 192.168.20.1 255.255.255.0
+interface S0/0/0
+no shutdown 
+ip nat outside 
+ip address 85.201.100.1 255.255.255.0 
+access-list 1 permit 192.168.10.0 0.0.0.255
+access-list 1 permit 192.168.20.0 0.0.0.255
+ip nat inside source list 1 interface Serial 0/0/0 overload 
+ip nat inside source static tcp 192.168.20.3 80 85.201.100.1 80
+
+RD1 :
+en 
+conf t
+hostname RD1
+interface S0/0/0
+no shutdown 
+ip address 85.201.100.2 255.255.255.252
+interface f0/0
+no shutdown 
+ip address 85.201.100.5 255.255.255.252 
+
+
+PC3: 
+Ip Address :85.201.100.6 
+Subnet Mask : 255.255.255.252
+Default-gateway : 85.201.100.5
+
+
+
+
+
+______________________________________________________________________________________________________________________________________________________________________________________________________________________________
+
+LAB 6.2
+
+Jle fait ap, c'est pas foufou, c'est le même réseau que le 6.1 sauf que on le fait avec un pool d'addresses publiques
