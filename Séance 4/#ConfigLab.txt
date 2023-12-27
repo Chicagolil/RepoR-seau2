@@ -1,0 +1,138 @@
+LAB 4.1:
+
+PC1:
+Ip address : 192.168.30.2
+Subnet Mask : 255.255.255.0
+Default gateway : 192.168.30.1
+
+PC3:
+Ip address : 192.168.30.3
+Subnet Mask : 255.255.255.0
+Default gateway : 192.168.30.1
+
+PC2:
+Ip address : 192.168.40.2
+Subnet Mask : 255.255.255.0
+Default gateway : 192.168.40.1
+
+PC4:
+Ip address : 192.168.40.3
+Subnet Mask : 255.255.255.0
+Default gateway : 192.168.40.1
+
+SG:
+en 
+conf t
+hostname SG
+vlan 30
+name user
+vlan 40
+name compta
+vlan 99
+name IT
+interface F0/1
+switchport mode access
+switchport acces vlan 30
+interface F0/2
+switchport mode access
+switchport acces vlan 40
+interface G0/2
+switchport mode trunk 
+interface G0/1
+switchport mode trunk 
+interface vlan 99
+ip address 192.168.99.2 255.255.255.0
+exit 
+ip default-gateway 192.168.99.1
+interface G0/1
+switchport trunk native vlan 99
+interface G0/2
+switchport trunk native vlan 99
+
+SD:
+en 
+conf t
+hostname SG
+vlan 30
+name user
+vlan 40
+name compta
+vlan 99
+name IT
+interface F0/1
+switchport mode access
+switchport acces vlan 30
+interface F0/2
+switchport mode access
+switchport acces vlan 40
+interface G0/2
+switchport mode trunk 
+interface G0/1
+switchport mode trunk 
+interface vlan 99
+ip address 192.168.99.3 255.255.255.0
+exit 
+ip default-gateway 192.168.99.1
+interface G0/1
+switchport trunk native vlan 99
+interface G0/2
+switchport trunk native vlan 99
+
+L3:
+en 
+conf t
+hostname L3
+ip routing 
+vlan 30
+name user
+vlan 40
+name compta
+vlan 99
+name IT
+interface vlan 30
+ip address 192.168.30.1 255.255.255.0
+interface vlan 40
+ip address 192.168.40.1 255.255.255.0
+interface vlan 99
+ip address 192.168.99.1 255.255.255.0
+interface g0/1
+switchport trunk encapsulation dot1Q
+switchport mode trunk 
+interface g0/2
+switchport trunk encapsulation dot1Q
+switchport mode trunk 
+interface f0/1
+no switchport 
+no shutdown 
+ip address 192.168.20.2 255.255.255.0
+interface G0/1
+switchport trunk native vlan 99
+interface G0/2
+switchport trunk native vlan 99
+exit 
+router rip 
+version 2 
+network 192.168.20.0
+network 192.168.30.0
+network 192.168.40.0
+network 192.168.99.0
+
+ISP:
+en 
+conf t
+hostname ISP 
+interface G0/0/0
+no shutdown 
+ip address 192.168.20.1 255.255.255.0
+interface G0/0/1
+no shutdown 
+ip address 192.168.10.1 255.255.255.0
+exit 
+router rip 
+version 2 
+network 192.168.20.0
+network 192.168.10.0
+PC0: 
+Ip address: 192.168.10.2
+Subnet Mask : 255.255.255.0
+Default Gateway : 192.168.10.1

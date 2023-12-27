@@ -1,0 +1,274 @@
+SRV-01:
+Ip address : 10.1.30.1
+Subnet Mask : 255.255.255.0
+Default-Gateway : 10.1.30.254
+
+IT-01:
+Ip address: 10.1.10.1
+Subnet Mask : 255.255.255.0
+Default-Gateway : 10.1.10.254
+
+PROD-01:
+Ip address: 10.1.20.1
+Subnet Mask : 255.255.255.0
+Default-Gateway : 10.1.20.254
+
+PROD-02:
+Ip address: 10.1.20.2
+Subnet Mask : 255.255.255.0
+Default-Gateway : 10.1.20.254
+
+
+SW-09:
+en 
+conf t
+hostname SW-09
+ip domain-name formation.lab 
+ip ssh version 2
+username admin secret cisco 
+interface vlan 10
+no shutdown 
+ip address 10.1.10.240 255.255.255.0
+exit 
+ip default-gateway 10.1.10.254
+line vty 0 15 
+login local 
+transport input ssh 
+crypto key generate rsa 
+vlan 10
+name IT
+vlan 20
+name PROD 
+vlan 30
+name SERVER 
+interface F0/1
+switchport mode access 
+switchport access vlan 30
+interface G0/1
+switchport mode trunk 
+
+
+
+SW-01:
+en 
+conf t
+hostname SW-01
+ip domain-name formation.lab 
+ip ssh version 2
+username admin secret cisco 
+interface vlan 10
+no shutdown 
+ip address 10.1.10.241 255.255.255.0
+exit 
+ip default-gateway 10.1.10.254
+line vty 0 15 
+login local 
+transport input ssh 
+crypto key generate rsa 
+vlan 10
+name IT
+vlan 20
+name PROD 
+vlan 30
+name SERVER 
+interface F0/1
+switchport mode access 
+switchport acces vlan 10
+interface F0/2
+switchport mode access 
+switchport acces vlan 20
+interface G0/1
+switchport mode trunk 
+
+
+
+SW-02:
+en 
+conf t
+hostname SW-02
+ip domain-name formation.lab 
+ip ssh version 2
+username admin secret cisco 
+interface vlan 10
+no shutdown 
+ip address 10.1.10.242 255.255.255.0
+exit 
+ip default-gateway 10.1.10.254
+line vty 0 15 
+login local 
+transport input ssh 
+crypto key generate rsa 
+vlan 10
+name IT
+vlan 20
+name PROD 
+vlan 30
+name SERVER 
+interface F0/2
+switchport mode access 
+switchport acces vlan 20
+interface G0/1
+switchport mode trunk 
+
+CSW-01:
+en 
+conf t
+hostname CSW-01
+ip domain-name formation.lab
+ip ssh version 2
+ip routing
+username admin secret cisco 
+interface vlan 10
+no shutdown 
+ip address 10.1.10.254 255.255.255.0
+exit 
+line vty 0 4 
+login local 
+transport input ssh 
+exit 
+crypto key generate rsa 
+vlan 10
+name IT
+vlan 20
+name PROD 
+vlan 30
+name SERVER 
+interface vlan 20
+ip address 10.1.20.254 255.255.255.0
+interface vlan 30
+ip address 10.1.30.254 255.255.255.0
+interface g1/0/11
+--switchport trunk encapsulation dot1Q-- (pas nécessaire ici)
+switchport mode trunk
+interface g1/0/1
+--switchport trunk encapsulation dot1Q-- (pas nécessaire ici)
+switchport mode trunk
+interface g1/0/2
+--switchport trunk encapsulation dot1Q-- (pas nécessaire ici)
+switchport mode trunk
+exit
+router rip 
+version 2 
+network 10.1.0.252
+passive-interface vlan 10
+passive-interface vlan 20
+passive-interface vlan 30
+
+
+
+
+
+RT-01:
+en  
+conf t 
+hostname RT-01
+ip domain-name formation.lab 
+ip ssh version 2
+username admin secret cisco 
+line vty 0 4 
+login local 
+transport input ssh 
+exit 
+crypto key generate rsa 
+interface G0/0/0
+no shutdown 
+ip address 172.31.255.1 255.255.255.252
+interface G0/0
+no shutdown 
+ip address 10.1.0.254 255.255.255.252
+interface G0/1
+no shutdown 
+ip address 20.0.0.200 255.255.255.0
+exit 
+router rip 
+version 2
+network 10.1.0.252
+network 172.31.255.0
+default-information originate 
+exit 
+ip route 0.0.0.0 0.0.0.0 20.0.0.1
+
+
+
+
+RT-02:
+en 
+conf t
+hostname RT-02
+ip domain-name formation.lab
+ip ssh version 2
+username admin secret cisco 
+line vty 0 4
+login local 
+transport input ssh 
+exit 
+crypto key generate rsa 
+interface g0/0
+no ip address 
+no shutdown 
+interface g0/0.10
+encapsulation dot1Q 10
+ip address 10.2.10.254 255.255.255.0
+interface g0/0.20
+encapsulation dot1Q 20
+ip address 10.2.20.254 255.255.255.0
+interface g0/0.30
+encapsulation dot1Q 30
+ip address 10.2.30.254 255.255.255.0
+interface G0/0/0
+no shutdown 
+ip address 172.31.255.2 255.255.255.252
+exit 
+router rip 
+version 2
+network 172.31.255.0
+network 10.2.0.0
+passive-interface G0/0.10
+passive-interface G0/0.20
+passive-interface G0/0.30
+exit 
+
+
+
+SW-04:
+en 
+conf t
+hostname SW-04
+ip domain-name formation.lab
+ip ssh version 2
+username admin secret cisco 
+interface vlan 10 
+no shutdown 
+ip address 10.2.10.244 255.255.255.0
+exit 
+ip default-gateway 10.2.10.254
+line vty 0 15
+login local 
+transport input ssh 
+exit 
+crypto key generate rsa 
+vlan 10
+name IT
+vlan 20
+name PROD 
+vlan 30
+name SERVER 
+interface F0/1
+switchport mode access
+switchport acces vlan 10
+interface F0/2
+switchport mode access
+switchport acces vlan 20
+interface g0/1
+switchport mode trunk
+
+IT-03:
+Ip address : 10.2.10.1
+Subnet Mask : 255.255.255.0
+Default-Gateway : 10.2.10.254
+
+PROD-03: 
+Ip address : 10.2.20.1
+Subnet Mask : 255.255.255.0
+Default-Gateway : 10.2.20.254
+
